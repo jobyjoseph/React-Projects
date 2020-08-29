@@ -1,0 +1,59 @@
+import React from "react";
+import { shallow } from "enzyme";
+import Gift from "./Gift";
+
+describe("Gift", () => {
+  const mockRemove = jest.fn();
+  const id = 1;
+  const props = {
+    gift: { id },
+    removeGift: mockRemove,
+  };
+  const gift = shallow(<Gift {...props} />);
+
+  it("renders properly", () => {
+    expect(gift).toMatchSnapshot();
+  });
+
+  it("creates a state for person and present", () => {
+    expect(gift.state()).toEqual({ person: "", present: "" });
+  });
+
+  describe("when typing into the person input", () => {
+    const person = "Uncle";
+
+    beforeEach(() => {
+      gift
+        .find(".input-person")
+        .simulate("change", { target: { name: "person", value: person } });
+    });
+
+    it("updates person state", () => {
+      expect(gift.state().person).toEqual(person);
+    });
+  });
+
+  describe("when typing into the present input", () => {
+    const present = "iPad";
+
+    beforeEach(() => {
+      gift
+        .find(".input-present")
+        .simulate("change", { target: { name: "present", value: present } });
+    });
+
+    it("updates present state", () => {
+      expect(gift.state().present).toEqual(present);
+    });
+  });
+
+  describe("when clicking `Remove Gift` button", () => {
+    beforeEach(() => {
+      gift.find(".btn-remove").simulate("click");
+    });
+
+    it("calls the remove gift callback", () => {
+      expect(mockRemove).toHaveBeenCalledWith(id);
+    });
+  });
+});
